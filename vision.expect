@@ -74,7 +74,7 @@ foreach comando $lista_comandos {
         # Lidar com a mensagem "Press any key to continue Ctrl+c to stop"
         send "\r"
         expect "#"
-        sleep 0.5
+        sleep 0.4
       }
     }
   }
