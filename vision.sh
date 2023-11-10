@@ -43,20 +43,20 @@ coletar_dados() {
 
 # Função para processar as opções da linha de comando
 processar_opcoes() {
-    while getopts "i:u:p:s:" opt; do
+    while getopts "i:u:p:o:" opt; do
         case $opt in
-            s) ip="$OPTARG" ;;
+            o) ip="$OPTARG" ;;
             u) user="$OPTARG" ;;
             i) input="$OPTARG" ;;
             p) pass="$OPTARG" ;;
             \?)
                 color_message "red" "[!] Opção inválida: -$OPTARG" >&2
-                color_message "yellow" "[?] Uso: bash vision.sh -s SERVER_IP -u USER -i INPUT_FILE -p PASS"
+                color_message "yellow" "[?] Uso: bash vision.sh -o OLT_IP -u USER -i INPUT_FILE -p PASS"
                 exit 1
                 ;;
             :)
                 color_message "red" "[!] A opção -$OPTARG requer um argumento." >&2
-                color_message "yellow" "[?] Uso: bash vision.sh -s SERVER_IP -u USER -i INPUT_FILE -p PASS"
+                color_message "yellow" "[?] Uso: bash vision.sh -o OLT_IP -u USER -i INPUT_FILE -p PASS"
                 exit 1
                 ;;
         esac
@@ -66,7 +66,7 @@ processar_opcoes() {
 # Função para verificar se todas as variáveis foram preenchidas
 verificar_variaveis() {
     if [[ -z "$input" || -z "$ip" || -z "$user" || -z "$pass" ]]; then
-        color_message "yellow" "[?] Uso: bash vision.sh -s SERVER_IP -u USER -i INPUT_FILE -p PASS"
+        color_message "yellow" "[?] Uso: bash vision.sh -o OLT_IP -u USER -i INPUT_FILE -p PASS"
         exit 1
     fi
 }
@@ -75,7 +75,7 @@ verificar_variaveis() {
 verificar_arquivo() {
     if [[ ! -f "$input" ]]; then
         color_message "red" "[!] O arquivo $input não existe"
-        color_message "yellow" "[?] Uso: bash vision.sh -s SERVER_IP -u USER -i INPUT_FILE -p PASS"
+        color_message "yellow" "[?] Uso: bash vision.sh -o OLT_IP -u USER -i INPUT_FILE -p PASS"
         exit 1
     fi
 }
@@ -151,24 +151,26 @@ executar_oxygen() {
     expect $dir_oxygen "$ip" "$user" "$pass" "$input" | tee "$input_sem_extensao"_telnet.txt
     grep -E 'RECV POWER   :|onu is in unactive!|\[ ERR ' "$input_sem_extensao"_telnet.txt > "$input_sem_extensao"_recv.txt
     echo
-    color_message "green" "Oxygen executado com sucesso"
-    echo
 }
 
 # Função para filtrar os dados
 filtrar_dados() {
-    color_message "yellow" "[!] Iniciando formatação dos dados com Tsunami"
+    color_message "yellow" "[!] Iniciando formatação dos dados com Tsunami..."
     
-    
+    # Este pseudoscript foi herdado do tsunami
+    # SEND
     cat "$input_sem_extensao"_telnet.txt | grep '\(-40\|SEND POWER   :\|\[ ERR\)' > tmp.tmp
     sed -e 's/(Dbm)//g; s/\t(Dbm)//g; s/POWER//g; s/   / /g; s/  / /g; s/ onu is in unactive!//g' tmp.tmp > "$input_sem_extensao"_send.txt
 
+    # RECV
     cat "$input_sem_extensao"_telnet.txt | grep '\(-40\|RECV POWER   :\|\[ ERR\)' > tmp.tmp
     sed -e 's/(Dbm)//g; s/\t(Dbm)//g; s/POWER//g; s/   / /g; s/  / /g; s/ onu is in unactive!//g' tmp.tmp > "$input_sem_extensao"_recv.txt
 
+    # OLT RECV
     cat "$input_sem_extensao"_telnet.txt | grep '\(-40\|OLT RECV POWER :\|\[ ERR\)' > tmp.tmp
     sed -e 's/(Dbm)//g; s/\t(Dbm)//g; s/POWER//g; s/   / /g; s/  / /g; s/ onu is in unactive!//g' tmp.tmp > "$input_sem_extensao"_olt_recv.txt
 
+    # CLEAN
     rm tmp.tmp
     echo
 }
@@ -216,12 +218,12 @@ filtrar_dados
 # fi
 
 # Finalização do script
+color_message "yellow" "[!] Formatando colunas..."
 echo
-color_message "yellow" "[!] Finalizando..."
 
-# pr -T -s$'\t' -m -w100 -t ../"$input_sem_extensao"_formatado.txt "$input_sem_extensao"_send.txt "$input_sem_extensao"_recv.txt "$input_sem_extensao"_olt_recv.txt | column -s $'\t' -t
+# pr -T -s$'\t' -m -w100 -t "$input_sem_extensao"_formatado.txt "$input_sem_extensao"_send.txt "$input_sem_extensao"_recv.txt "$input_sem_extensao"_olt_recv.txt | column -s $'\t' -t
 
-export ARQUIVO1=../"$input_sem_extensao"_formatado.txt
+export ARQUIVO1="$input_sem_extensao"_formatado.txt
 export ARQUIVO2="$input_sem_extensao"_send.txt
 export ARQUIVO3="$input_sem_extensao"_recv.txt
 export ARQUIVO4="$input_sem_extensao"_olt_recv.txt
@@ -261,8 +263,6 @@ pd.set_option('display.colheader_justify', 'center')
 print(result.to_string(index=False, header=False))
 EOF
 
-
-
-color_message "green" "[.]Script finalizado"
+echo && echo "Vision - By Gustavo404" | lolcat
 
 exit 0

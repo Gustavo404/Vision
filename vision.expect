@@ -68,13 +68,13 @@ foreach comando $lista_comandos {
       {
         # Linha esperada, continue com o próximo comando
         # Adicionar uma pausa de X segundos após cada comando, se necessário
-        sleep 0.5
+        sleep 0.3
       }
       -re {Press any key to continue Ctrl\+c to stop} {
         # Lidar com a mensagem "Press any key to continue Ctrl+c to stop"
         send "\r"
         expect "#"
-        sleep 0.4
+        sleep 0.3
       }
     }
   }
@@ -87,5 +87,6 @@ foreach comando $lista_comandos {
 # Exibir mensagem de conclusão do script
 sleep 0.5
 puts ""
-print_success "Execução do script Telnet concluída com sucesso!"
+puts ""
+print_success "Oxygen executado com sucesso!"
 
