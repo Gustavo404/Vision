@@ -75,6 +75,7 @@ verificar_variaveis() {
 verificar_arquivo() {
     if [[ ! -f "$input" ]]; then
         color_message "red" "[!] O arquivo $input não existe"
+        color_message "yellow" "[?] Uso: bash vision.sh -s SERVER_IP -u USER -i INPUT_FILE -p PASS"
         exit 1
     fi
 }
