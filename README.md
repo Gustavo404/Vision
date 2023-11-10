@@ -12,5 +12,3 @@ sudo apt install python3 expect lolcat
 ```python
 pip install pandas
 ```
-
-<img src="/source/Vision_Help.png" alt="Vortex Logo" width="720">
