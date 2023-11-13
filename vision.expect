@@ -68,13 +68,13 @@ foreach comando $lista_comandos {
       {
         # Linha esperada, continue com o próximo comando
         # Adicionar uma pausa de X segundos após cada comando, se necessário
-        sleep 0.3
+        sleep 0.5
       }
       -re {Press any key to continue Ctrl\+c to stop} {
         # Lidar com a mensagem "Press any key to continue Ctrl+c to stop"
         send "\r"
         expect "#"
-        sleep 0.3
+        sleep 0.5
       }
     }
   }
