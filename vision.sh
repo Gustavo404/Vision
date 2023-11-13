@@ -1,5 +1,7 @@
 #!/bin/bash
 
+dos2unix *
+
 # Variaveis misselaneas
 # SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 dir_tsunami="../permutador.sh"
