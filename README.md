@@ -6,7 +6,7 @@
 Para instalar o script, utilize o seguinte comando:
 
 ```bash
-sudo apt install python3 python3-pip expect lolcat
+sudo apt install python3 python3-pip expect lolcat dos2unix
 ```
 
 ```python
